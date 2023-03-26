@@ -46,7 +46,7 @@ export class BaseViewProvider implements vscode.WebviewViewProvider {
 
 					<link href="${styleMainUri}" rel="stylesheet">
 
-					<title>Base View Extension</title>
+					<title>My Code Tool</title>
 				</head>
 				<body>
 					<script>

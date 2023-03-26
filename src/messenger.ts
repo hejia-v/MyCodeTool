@@ -11,13 +11,23 @@ const receiveMessages = (webview: vscode.Webview) => {
 		let openPath: vscode.Uri
 
 		switch (message.command) {
-		case 'openFileExample':
-			openPath = vscode.Uri.file(message.text)
+			case 'openFileExample': {
+				openPath = vscode.Uri.file(message.text)
 
-			vscode.workspace.openTextDocument(openPath).then(async (doc) => {
-				vscode.window.showTextDocument(doc)
-			})
-			return
+				vscode.workspace.openTextDocument(openPath).then(async (doc) => {
+					vscode.window.showTextDocument(doc)
+				})
+				return
+			}
+			case 'onInlineVariable': {
+				break
+			}
+			case 'onRenameVariable': {
+				break
+			}
+			case 'onRemoveRedundantOperatorSymbols': {
+				break
+			}
 		}
 	})
 }

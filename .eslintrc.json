@@ -28,6 +28,7 @@
       "ts": "@typescript-eslint/parser"
     }
   },
+  "indent": "off",
   "ignorePatterns": ["dist", "**/*.d.ts"],
   "globals": {
     "vscode": "writable"

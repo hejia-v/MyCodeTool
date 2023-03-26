@@ -1,6 +1,6 @@
 {
-  "name": "vue3baseextension",
-  "displayName": "vue3BaseExtension",
+  "name": "mycodetool",
+  "displayName": "MyCodeTool",
   "description": "",
   "version": "0.0.1",
   "engines": {
