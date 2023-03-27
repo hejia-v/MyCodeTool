@@ -24,7 +24,7 @@
       "activitybar": [
         {
           "id": "vue-3-base-view",
-          "title": "Vue 3 Base Extension",
+          "title": "My Code Tool",
           "icon": "src/assets/img/default.png"
         }
       ]
@@ -34,9 +34,9 @@
         {
           "type": "webview",
           "id": "base-view-sidebar",
-          "name": "Vue 3 Base Extension",
+          "name": "My Code Tool",
           "icon": "src/assets/img/default.png",
-          "contextualTitle": "Vue 3 Base Extension"
+          "contextualTitle": "My Code Tool"
         }
       ]
     }

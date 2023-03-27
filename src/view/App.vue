@@ -1,28 +1,32 @@
 <template>
-  <div class="flex items-center flex-col mx-auto">
-
-    
+  <div class="flex items-center flex-col mx-auto box1">
     <button @click="onInlineVariable">
       Inline variable
     </button>
-    
-    <hr class="border-white w-full mt-4 mb-8">
-    <p>Old Variable</p>
-    <input v-model="oldVariable" type="text">
-    <p>New Variable</p>
-    <input v-model="newVariable" type="text">
-    
+  </div>
+
+  <hr class="splitter1">
+
+  <div class="flex items-center flex-col mx-auto box1">
+    <div class="textcontainer1">
+      <p class="fullwidth1 text1">Curr Var:&nbsp;&nbsp;{{ currVariable }}</p>
+    </div>
+    <div class="textcontainer1 flex">
+      <p class="text1">New Var:&nbsp;&nbsp;</p>
+      <input v-model="newVariable" type="text">
+    </div>
+
     <button @click="onRenameVariable">
       Rename variable
     </button>
-    
-    <hr class="border-white w-full mt-4 mb-8">
+  </div>
+
+  <hr class="splitter1">
+
+  <div class="flex items-center flex-col mx-auto box1">
     <button @click="onRemoveRedundantOperatorSymbols">
       Remove redundant operator symbols
     </button>
-
-
-
   </div>
 </template>
 
@@ -37,7 +41,7 @@ const { t, locale } = useI18n()
 let currentFile = ref('')
 let lastFile = ref('')
 
-let oldVariable = ref('')
+let currVariable = ref('')
 let newVariable = ref('')
 
 // Example of handling messages sent from the extension to the webview
@@ -45,10 +49,15 @@ window.addEventListener('message', (event) => {
   const message = event.data // The JSON data our extension sent
 
   switch (message.command) {
-    case 'setCurrentFileExample':
+    case 'setCurrentFileExample': {
       lastFile.value = currentFile.value
       currentFile.value = message.text
       return
+    }
+    case 'setCurrentVariable': {
+      currVariable.value = message.text
+      return
+    }
   }
 })
 
@@ -69,7 +78,7 @@ const onInlineVariable = () => {
 const onRenameVariable = () => {
   vscode.postMessage({
     command: 'onRenameVariable',
-    oldVariable: oldVariable.value,
+    currVariable: currVariable.value,
     newVariable: newVariable.value,
   })
 }
