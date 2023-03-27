@@ -16,6 +16,11 @@
       <input v-model="newVariable" type="text">
     </div>
 
+    <button @click="onRefreshCurrentVariable">
+      Refresh variable
+    </button>
+    <div class="space_height1">
+    </div>
     <button @click="onRenameVariable">
       Rename variable
     </button>
@@ -72,6 +77,12 @@ const openLastFile = () => {
 const onInlineVariable = () => {
   vscode.postMessage({
     command: 'onInlineVariable',
+  })
+}
+
+const onRefreshCurrentVariable = () => {
+  vscode.postMessage({
+    command: 'onRefreshCurrentVariable',
   })
 }
 

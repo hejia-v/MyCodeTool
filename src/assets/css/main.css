@@ -26,8 +26,8 @@ ul {
   padding-left: var(--container-paddding);
 }
 
-body > *,
-form > * {
+body>*,
+form>* {
   margin-block-start: var(--input-margin-vertical);
   margin-block-end: var(--input-margin-vertical);
 }
@@ -139,10 +139,18 @@ p {
   width: 100%;
   height: 30px;
   display: flex;
-  flex-direction: row; /* 设置其子元素沿垂直方向排列 */
-  justify-content: center; /* 垂直居中 */
-  align-items: flex-start; /* 左对齐 */
+  flex-direction: row;
+  /* 设置其子元素沿垂直方向排列 */
+  justify-content: center;
+  /* 垂直居中 */
+  align-items: flex-start;
+  /* 左对齐 */
 }
+
 input {
   height: 25px;
+}
+
+.space_height1 {
+  height: 5px;
 }

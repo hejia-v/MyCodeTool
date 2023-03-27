@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import { GLSLRefactor } from './tool/GLSLRefactor'
 
 export const handleMessages = (webview: vscode.Webview) => {
 	receiveMessages(webview)
@@ -20,6 +21,10 @@ const receiveMessages = (webview: vscode.Webview) => {
 				return
 			}
 			case 'onInlineVariable': {
+				break
+			}
+			case 'onRefreshCurrentVariable': {
+				GLSLRefactor.RefreshCurrentVariable();
 				break
 			}
 			case 'onRenameVariable': {
