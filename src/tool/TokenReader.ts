@@ -1,6 +1,8 @@
-class TokenReader {
+export class TokenReader {
     private readonly m_tokens: Token[];
     private m_position: number;
+    public BeginString: string = "";
+    public EndString: string = "";
 
     public get Position(): number {
         return this.m_position;
