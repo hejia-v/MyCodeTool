@@ -1,6 +1,6 @@
 import assert from "assert";
 
-class TextReader {
+export class TextReader {
     private readonly m_text: string;
     private m_position: number;
 
@@ -113,6 +113,11 @@ class TextReader {
 
     public GetString(start: number, end: number): string {
         const str = this.m_text.substring(start, end);
+        return str;
+    }
+
+    public GetStringRight(start: number): string {
+        const str = this.m_text.substring(start);
         return str;
     }
 }

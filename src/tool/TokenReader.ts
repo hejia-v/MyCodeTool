@@ -1,3 +1,5 @@
+import { Token, TokenType } from "./Tokenizer";
+
 export class TokenReader {
     private readonly m_tokens: Token[];
     private m_position: number;

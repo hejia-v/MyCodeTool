@@ -1,39 +1,40 @@
-enum TokenType {
-    BracketLeft,
-    BracketRight,
-    MiddleBracketLeft,
-    MiddleBracketRight,
-    CurlyBraceLeft,
-    CurlyBraceRight,
-    StrText,
-    WhiteSpace,
-    Define,
-    Include,
-    Typedef,
-    Struct,
-    Colon,
-    SemiColon,
-    Comma,
-    Dot,
-    Or,
-    AndSymbol,
-    Dollar,
-    Percent,
-    Minus,
-    Plus,
-    Divide,
-    At,
-    Greater,
-    Smaller,
-    // UpArrow,
-    Times,
-    // Exclamation,
-    // Question,
-    EqComp,
-    Equal,
-    Hex,
-    Numbers,
-    Variable,
+export enum TokenType {
+    BracketLeft = "BracketLeft",
+    BracketRight = "BracketRight",
+    MiddleBracketLeft = "MiddleBracketLeft",
+    MiddleBracketRight = "MiddleBracketRight",
+    CurlyBraceLeft = "CurlyBraceLeft",
+    CurlyBraceRight = "CurlyBraceRight",
+    StrText = "StrText",
+    WhiteSpace = "WhiteSpace",
+    Define = "Define",
+    Include = "Include",
+    Typedef = "Typedef",
+    Struct = "Struct",
+    Colon = "Colon",
+    SemiColon = "SemiColon",
+    Comma = "Comma",
+    Dot = "Dot",
+    Or = "Or",
+    AndSymbol = "AndSymbol",
+    Dollar = "Dollar",
+    Percent = "Percent",
+    Minus = "Minus",
+    Plus = "Plus",
+    Divide = "Divide",
+    At = "At",
+    Greater = "Greater",
+    Smaller = "Smaller",
+    // = "//" UpArrow,
+    Times = "Times",
+    // = "//" Exclamation,
+    Question = "Question",
+    EqComp = "EqComp",
+    Equal = "Equal",
+    Hex = "Hex",
+    Numbers = "Numbers",
+    Variable = "Variable",
+    Comment = "Comment",
 }
 
 interface TokenMatch {
@@ -43,7 +44,7 @@ interface TokenMatch {
     RemainingText: string;
 }
 
-class Token {
+export class Token {
     constructor(public Type: TokenType, public Value: string = "") { }
 
     public Clone(): Token {
@@ -51,7 +52,9 @@ class Token {
     }
 
     public toString(): string {
-        return `Token<Type="${this.Type}", Value="${this.Value}">`;
+        // var type = TokenType[this.Type];
+        var type = this.Type.toString();
+        return `Token<Type="${type}", Value="${this.Value}">`;
     }
 }
 
@@ -59,7 +62,7 @@ class TokenDefinition {
     private _regex: RegExp;
     private _returnsToken: TokenType;
 
-    constructor(returnsToken: TokenType, regexPattern: string) {
+    constructor(returnsToken: TokenType, regexPattern: RegExp) {
         this._regex = new RegExp(regexPattern, "i");
         this._returnsToken = returnsToken;
     }
@@ -90,44 +93,45 @@ class TokenDefinition {
 }
 
 
-class GLSLTokenizer {
+export class GLSLTokenizer {
     private readonly m_tokenDefinitions: TokenDefinition[];
 
     constructor() {
+        const pattern = /\?/g;
         this.m_tokenDefinitions = [
-            new TokenDefinition(TokenType.BracketLeft, "\\("),
-            new TokenDefinition(TokenType.BracketRight, "\\)"),
-            new TokenDefinition(TokenType.MiddleBracketLeft, "\\["),
-            new TokenDefinition(TokenType.MiddleBracketRight, "\\]"),
-            new TokenDefinition(TokenType.CurlyBraceLeft, "\\{"),
-            new TokenDefinition(TokenType.CurlyBraceRight, "\\}"),
+            new TokenDefinition(TokenType.Comment, /\/\/.*\n/),
+            new TokenDefinition(TokenType.BracketLeft, /\(/),
+            new TokenDefinition(TokenType.BracketRight, /\)/),
+            new TokenDefinition(TokenType.MiddleBracketLeft, /\[/),
+            new TokenDefinition(TokenType.MiddleBracketRight, /\]/),
+            new TokenDefinition(TokenType.CurlyBraceLeft, /\{/),
+            new TokenDefinition(TokenType.CurlyBraceRight, /\}/),
 
-            new TokenDefinition(TokenType.StrText, "\"([^\"]*)\""), // ????  "\"(.*?)\""
-            new TokenDefinition(TokenType.WhiteSpace, "\\s+"),
-            new TokenDefinition(TokenType.Define, "#define"),
-            new TokenDefinition(TokenType.Include, "#include"),
-            new TokenDefinition(TokenType.Typedef, "typedef"),
-            new TokenDefinition(TokenType.Struct, "\\bstruct"),
-            new TokenDefinition(TokenType.Colon, ":"),
-            new TokenDefinition(TokenType.SemiColon, ";"),
-            new TokenDefinition(TokenType.Comma, ","),
-            new TokenDefinition(TokenType.Dot, "\\."),
-            new TokenDefinition(TokenType.Or, "\\|\\|"),
-            new TokenDefinition(TokenType.AndSymbol, "&"),
-            new TokenDefinition(TokenType.Dollar, "\\$"),
-            new TokenDefinition(TokenType.Percent, "%"),
-            new TokenDefinition(TokenType.Minus, "-"),
-            new TokenDefinition(TokenType.Plus, "\\+"),
-            new TokenDefinition(TokenType.Divide, "/"),
-            new TokenDefinition(TokenType.At, "@"),
-            new TokenDefinition(TokenType.Greater, ">"),
-            new TokenDefinition(TokenType.Smaller, "<"),
-            new TokenDefinition(TokenType.Times, "\\*"),
-            new TokenDefinition(TokenType.EqComp, "=="),
-            new TokenDefinition(TokenType.Equal, "="),
-            new TokenDefinition(TokenType.Hex, "0[xX][0-9a-fA-F]+"),
-            new TokenDefinition(TokenType.Numbers, "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?[f]?"),
-            new TokenDefinition(TokenType.Variable, "\\b[A-Za-z0-9_]+\\b")
+            new TokenDefinition(TokenType.StrText, /"([^"])"/), // ????  "\"(.*?)\""
+            new TokenDefinition(TokenType.WhiteSpace, /\s+/),
+            new TokenDefinition(TokenType.Define, /\#define/),
+            new TokenDefinition(TokenType.Include, /\#include/),
+            new TokenDefinition(TokenType.Colon, /\:/),
+            new TokenDefinition(TokenType.SemiColon, /\;/),
+            new TokenDefinition(TokenType.Comma, /\,/),
+            new TokenDefinition(TokenType.Dot, /\./),
+            new TokenDefinition(TokenType.Or, /\|\|/),
+            new TokenDefinition(TokenType.AndSymbol, /\&/),
+            new TokenDefinition(TokenType.Question, /\?/),
+            new TokenDefinition(TokenType.Dollar, /\$/),
+            new TokenDefinition(TokenType.Percent, /\%/),
+            new TokenDefinition(TokenType.Minus, /\-/),
+            new TokenDefinition(TokenType.Plus, /\+/),
+            new TokenDefinition(TokenType.Divide, /\//),
+            new TokenDefinition(TokenType.At, /\@/),
+            new TokenDefinition(TokenType.Greater, /\>/),
+            new TokenDefinition(TokenType.Smaller, /\</),
+            new TokenDefinition(TokenType.Times, /\*/),
+            new TokenDefinition(TokenType.EqComp, /==/),
+            new TokenDefinition(TokenType.Equal, /\=/),
+            new TokenDefinition(TokenType.Hex, /0[xX][0-9a-fA-F]+/),
+            new TokenDefinition(TokenType.Numbers, /[-+]?[0-9].?[0-9]+([eE][-+]?[0-9]+)?[f]?/),
+            new TokenDefinition(TokenType.Variable, /\b[A-Za-z0-9_]+\b/)
         ];
     }
 
@@ -139,7 +143,9 @@ class GLSLTokenizer {
         while (remainingText.trim().length != 0) {
             const match = this.FindMatch(remainingText);
             if (match.IsMatch) {
-                tokens.push(new Token(match.TokenType, match.Value));
+                const token = new Token(match.TokenType, match.Value);
+                console.log(token);
+                tokens.push(token);
                 remainingText = match.RemainingText!;
             } else {
                 throw new Error("Failed to generate invalid token");
