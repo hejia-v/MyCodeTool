@@ -49,6 +49,16 @@ export class TokenReader {
         return this.Position < this.m_tokens.length;
     }
 
+    public GetTokenAtCharactorPosition(pos: number): Token | null {
+        for (let i = 0; i < this.m_tokens.length; i++) {
+            const token = this.m_tokens[i];
+            if(token.StartIndex <= pos && pos < token.EndIndex) {
+                return token;
+            }
+        }
+        return null;
+    }
+
     public ForwardToSentenceEnd(): void {
         while (this.CanRead()) {
             const tok = this.Read()!;

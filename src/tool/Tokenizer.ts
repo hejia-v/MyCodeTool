@@ -47,6 +47,18 @@ interface TokenMatch {
 export class Token {
     constructor(public Type: TokenType, public Value: string = "") { }
 
+    public StartIndex: number = 0;
+
+    public get EndIndex(): number {
+        return this.StartIndex + this.Value.length;
+    }
+
+    public get Length(): number {
+        return this.Value.length;
+    }
+
+    public SentenceId: number = 0;
+
     public Clone(): Token {
         return new Token(this.Type, this.Value);
     }
@@ -144,7 +156,7 @@ export class GLSLTokenizer {
             const match = this.FindMatch(remainingText);
             if (match.IsMatch) {
                 const token = new Token(match.TokenType, match.Value);
-                console.log(token);
+                // console.log(token);
                 tokens.push(token);
                 remainingText = match.RemainingText!;
             } else {
