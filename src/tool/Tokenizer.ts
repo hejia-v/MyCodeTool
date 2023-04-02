@@ -32,7 +32,7 @@ export enum TokenType {
     EqComp = "EqComp",
     Equal = "Equal",
     Hex = "Hex",
-    Numbers = "Numbers",
+    Number = "Number",
     Variable = "Variable",
     Comment = "Comment",
 }
@@ -142,7 +142,7 @@ export class GLSLTokenizer {
             new TokenDefinition(TokenType.EqComp, /==/),
             new TokenDefinition(TokenType.Equal, /\=/),
             new TokenDefinition(TokenType.Hex, /0[xX][0-9a-fA-F]+/),
-            new TokenDefinition(TokenType.Numbers, /[-+]?[0-9].?[0-9]+([eE][-+]?[0-9]+)?[f]?/),
+            new TokenDefinition(TokenType.Number, /[-+]?[0-9].?[0-9]+([eE][-+]?[0-9]+)?[f]?/),
             new TokenDefinition(TokenType.Variable, /\b[A-Za-z0-9_]+\b/)
         ];
     }

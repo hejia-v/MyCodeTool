@@ -32,24 +32,24 @@
   <hr class="splitter1">
 
   <div class="flex items-center flex-col mx-auto box1">
-    <button @click="onRemoveRedundantOperatorSymbols">
+    <!-- <button @click="onRemoveRedundantOperatorSymbols">
       Remove redundant operator symbols
-    </button>
-    <div class="space_height1">
-    </div>
+    </button> -->
+    <!-- <div class="space_height1">
+    </div> -->
     <button @click="onNormailzeNumber">
       Normailze number
     </button>
     <div class="space_height1">
     </div>
-    <button @click="onSimplifyOperations">
+    <!-- <button @click="onSimplifyOperations">
       Simplify operations
     </button>
     <div class="space_height1">
     </div>
     <button @click="onFlipOperations">
       Flip operations
-    </button>
+    </button> -->
   </div>
 </template>
 

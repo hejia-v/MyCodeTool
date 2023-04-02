@@ -47,17 +47,17 @@ export class GLSLRefactor {
     }
 
     static RefreshCurrentVariable(): void {
-        console.log('This is a static function.');
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
         var tokenReader = this.GetTokenReader();
+        if (!tokenReader) return;
         const document = editor.document;
 
         const position = editor.selection.active;
         if (!position) return;
         const index = editor.document.offsetAt(position);
         console.log(index);
-        var token = tokenReader?.GetTokenAtCharactorPosition(index);
+        var token = tokenReader?.GetTokenAtCharacterPosition(index);
         if (!token) { return; }
         console.log(token.Value);
 
@@ -67,5 +67,73 @@ export class GLSLRefactor {
         });
     }
 
-    // 0.00999999978转换为0.01，有没有什么算法
+    static NormalizeNumber(): void {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+        var tokenReader = this.GetTokenReader();
+        if (!tokenReader) return;
+        const position = editor.selection.active;
+        if (!position) return;
+        const index = editor.document.offsetAt(position);
+        var token = tokenReader?.GetTokenAtCharacterPosition(index);
+        if (!token) { return; }
+
+        if (token.Type !== TokenType.Number) return;
+
+        var value = parseFloat(token.Value);
+        const factor = 10000;
+        value = Math.round(value * factor) / factor;
+        token.Value = value.toString();
+
+        const document = editor.document;
+
+        const fullRange = new vscode.Range(
+            document.positionAt(0),
+            document.positionAt(document.getText().length)
+        );
+        const newText = tokenReader.getText();
+        editor.edit(editBuilder => {
+            editBuilder.replace(fullRange, newText);
+        });
+    }
+
+    static RenameVariable(newVariable: string): void {
+        if (newVariable == null || newVariable.trim() === '') { return; }
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+        var tokenReader = this.GetTokenReader();
+        if (!tokenReader) return;
+        const position = editor.selection.active;
+        if (!position) return;
+        const index = editor.document.offsetAt(position);
+        var token = tokenReader?.GetTokenAtCharacterPosition(index);
+        if (!token) { return; }
+
+        var oldVariable = token.Value;
+        tokenReader.MoveToTokenByCharacterPosition(index);
+        tokenReader.RenameVariable(oldVariable, newVariable);
+
+        const document = editor.document;
+
+        const fullRange = new vscode.Range(
+            document.positionAt(0),
+            document.positionAt(document.getText().length)
+        );
+        const newText = tokenReader.getText();
+        editor.edit(editBuilder => {
+            editBuilder.replace(fullRange, newText);
+        });
+    }
+
+    static InlineVariable(): void {
+    }
+
+    static RemoveRedundantOperatorSymbols(): void {
+    }
+
+    static SimplifyOperations(): void {
+    }
+
+    static FlipOperations(): void {
+    }
 }

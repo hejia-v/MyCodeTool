@@ -21,6 +21,7 @@ const receiveMessages = (webview: vscode.Webview) => {
 				return
 			}
 			case 'onInlineVariable': {
+				GLSLRefactor.InlineVariable();
 				break
 			}
 			case 'onRefreshCurrentVariable': {
@@ -28,18 +29,23 @@ const receiveMessages = (webview: vscode.Webview) => {
 				break
 			}
 			case 'onRenameVariable': {
+				GLSLRefactor.RenameVariable(message.newVariable);
 				break
 			}
 			case 'onRemoveRedundantOperatorSymbols': {
+				GLSLRefactor.RemoveRedundantOperatorSymbols();
 				break
 			}
 			case 'onNormailzeNumber': {
+				GLSLRefactor.NormalizeNumber();
 				break
 			}
 			case 'onSimplifyOperations': {
+				GLSLRefactor.SimplifyOperations();
 				break
 			}
 			case 'onFlipOperations': {
+				GLSLRefactor.FlipOperations();
 				break
 			}
 		}
