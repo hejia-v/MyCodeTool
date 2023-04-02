@@ -41,6 +41,13 @@
       ]
     }
   },
+  "activationEvents": [
+  ],
+  "publisher": "my-publisher",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/my-username/my-extension.git"
+  },
   "dependencies": {
     "@intlify/unplugin-vue-i18n": "^0.8.1",
     "@vitest/ui": "^0.26.2",

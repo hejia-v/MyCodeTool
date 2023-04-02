@@ -111,7 +111,7 @@ export class GLSLTokenizer {
     constructor() {
         const pattern = /\?/g;
         this.m_tokenDefinitions = [
-            new TokenDefinition(TokenType.Comment, /\/\/.*\n/),
+            new TokenDefinition(TokenType.Comment, /\/\/.*\r?\n/),
             new TokenDefinition(TokenType.BracketLeft, /\(/),
             new TokenDefinition(TokenType.BracketRight, /\)/),
             new TokenDefinition(TokenType.MiddleBracketLeft, /\[/),
@@ -160,6 +160,11 @@ export class GLSLTokenizer {
                 tokens.push(token);
                 remainingText = match.RemainingText!;
             } else {
+                var text = "";
+                for (var i = 0; i < tokens.length; i++) {
+                    text += tokens[i].Value;
+                }
+                console.log(text);
                 throw new Error("Failed to generate invalid token");
             }
         }
