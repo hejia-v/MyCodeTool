@@ -118,6 +118,7 @@ void main()
     u_xlat1.xyz = unity_MatrixMV[0].xyz * in_POSITION0.xxx + u_xlat1.xyz;
     u_xlat1.xyz = unity_MatrixMV[2].xyz * in_POSITION0.zzz + u_xlat1.xyz;
     u_xlat1.xyz = u_xlat1.xyz + unity_MatrixMV[3].xyz;
+
     u_xlat12 = u_xlat1.z / unity_CameraProjection[1].y;
     u_xlat12 = abs(u_xlat12) / _OutlineScale;
     u_xlat12 = inversesqrt(u_xlat12);
@@ -151,56 +152,65 @@ void main()
     u_xlat0.x = glstate_matrix_projection[2].w;
     u_xlat0.y = glstate_matrix_projection[3].w;
     u_xlat2.w = dot(u_xlat0.xy, u_xlat0.zw);
+
     u_xlatb0 = 0.0<_UsingDitherAlpha;
-    u_xlat1 = (bool(u_xlatb0)) ? u_xlat1 : u_xlat2;
-    gl_Position = u_xlat1;
+    positionCSFinal = (bool(u_xlatb0)) ? u_xlat1 : u_xlat2;
+    gl_Position = positionCSFinal;
 
     // 输出变量
     vs_TEXCOORD0.xy = in_TEXCOORD0.xy;
     vs_TEXCOORD0.zw = vec2(0.0, 0.0);
     vs_TEXCOORD1.xw = in_COLOR0.wx;
     vs_TEXCOORD1.yz = vec2(1.0, 1.0);
+
     u_xlat4.xyz = in_POSITION0.yyy * unity_ObjectToWorld[1].xyz;
     u_xlat4.xyz = unity_ObjectToWorld[0].xyz * in_POSITION0.xxx + u_xlat4.xyz;
     u_xlat4.xyz = unity_ObjectToWorld[2].xyz * in_POSITION0.zzz + u_xlat4.xyz;
-    u_xlat4.xyz = u_xlat4.xyz + unity_ObjectToWorld[3].xyz;
-    vs_TEXCOORD6.xyz = u_xlat4.xyz;
-    u_xlat4.xyz = u_xlat4.xyz + (-_DissolvePosMaskPos.xyz);
-    u_xlat4.xyz = u_xlat4.xyz + (-in_POSITION0.xyz);
-    u_xlat4.xyz = vec3(_DissolvePosMaskWorldON) * u_xlat4.xyz + in_POSITION0.xyz;
-    u_xlat1.y = u_xlat1.y * _ProjectionParams.x;
-    u_xlat2.xzw = u_xlat1.xwy * vec3(0.5, 0.5, 0.5);
-    u_xlat1.xy = u_xlat2.zz + u_xlat2.xw;
-    vs_TEXCOORD2.xyw = bool(u_xlatb0) ? u_xlat1.xyw : vec3(0.0, 0.0, 0.0);
+    positionWS.xyz = u_xlat4.xyz + unity_ObjectToWorld[3].xyz;
+    vs_TEXCOORD6.xyz = positionWS.xyz; // positionWS
+
+    positionWS.xyz = positionWS.xyz - _DissolvePosMaskPos.xyz - in_POSITION0.xyz;
+    positionWS.xyz = _DissolvePosMaskWorldON * positionWS.xyz + in_POSITION0.xyz;
+    // 将y分量乘以_ProjectionParams.x的作用是将y坐标从[-1, 1]的范围缩放到[0, 1]的范围内，这个操作通常被称为"normalized device y" 或 "homogeneous clip y"。
+    // 这样做可以使得接下来的插值计算更加精确，并且可以避免出现深度测试错误的情况。
+    positionCSFinal.y = positionCSFinal.y * _ProjectionParams.x;
+    u_xlat2.xzw = positionCSFinal.xwy * vec3(0.5, 0.5, 0.5);
+    positionCSFinal.xy = u_xlat2.zz + u_xlat2.xw;
+
+    vs_TEXCOORD2.xyw = bool(u_xlatb0) ? positionCSFinal.xyw : vec3(0.0, 0.0, 0.0);
     vs_TEXCOORD2.z = u_xlatb0 ? _DitherAlpha : float(0.0);
-    u_xlat1.xy = (-in_TEXCOORD0.xy) + in_TEXCOORD2.xy;
-    u_xlat1.xy = vec2(vec2(_DissolveUV, _DissolveUV)) * u_xlat1.xy + in_TEXCOORD0.xy;
-    vs_TEXCOORD4.xy = u_xlat1.xy * _DissolveST.xy + _DissolveST.zw;
-    vs_TEXCOORD4.zw = u_xlat1.xy * _DistortionST.xy + _DistortionST.zw;
-    u_xlat2.xyz = (-u_xlat4.xyz) + _ES_EffCustomLightPosition.xyz;
-    u_xlat0.xyz = vec3(vec3(_DissolvePosMaskGlobalOn, _DissolvePosMaskGlobalOn, _DissolvePosMaskGlobalOn)) * u_xlat2.xyz + u_xlat4.xyz;
-    u_xlat0.xyz = u_xlat0.xyz + (-vec3(_DissolvePosMaskRootOffset.x, _DissolvePosMaskRootOffset.y, _DissolvePosMaskRootOffset.z));
-    u_xlat2.xyz = _ES_EffCustomLightPosition.xyz + (-unity_ObjectToWorld[3].xyz);
-    u_xlat3.xyz = vec3(_DissolvePosMaskWorldON) * (-unity_ObjectToWorld[3].xyz) + _DissolvePosMaskPos.xyz;
-    u_xlat2.xyz = u_xlat2.xyz + (-u_xlat3.xyz);
-    u_xlat2.xyz = vec3(vec3(_DissolvePosMaskGlobalOn, _DissolvePosMaskGlobalOn, _DissolvePosMaskGlobalOn)) * u_xlat2.xyz + u_xlat3.xyz;
-    u_xlat12 = dot(u_xlat2.xyz, u_xlat2.xyz);
+
+    dissolveUV.xy = _DissolveUV * (-in_TEXCOORD0.xy + in_TEXCOORD2.xy) + in_TEXCOORD0.xy;
+
+    vs_TEXCOORD4.xy = dissolveUV.xy * _DissolveST.xy + _DissolveST.zw;
+    vs_TEXCOORD4.zw = dissolveUV.xy * _DistortionST.xy + _DistortionST.zw;
+
+
+    u_xlat0.xyz = _DissolvePosMaskGlobalOn * (-positionWS.xyz + _ES_EffCustomLightPosition.xyz) + positionWS.xyz;
+    u_xlat0.xyz = u_xlat0.xyz - _DissolvePosMaskRootOffset.xyz;
+    lightDir.xyz = _ES_EffCustomLightPosition.xyz + (-unity_ObjectToWorld[3].xyz);
+    u_xlat3.xyz = _DissolvePosMaskWorldON * (-unity_ObjectToWorld[3].xyz) + _DissolvePosMaskPos.xyz;
+    lightDir.xyz = lightDir.xyz + -u_xlat3.xyz;
+    lightDir.xyz = _DissolvePosMaskGlobalOn * lightDir.xyz + u_xlat3.xyz;
+
+    u_xlat12 = dot(lightDir.xyz, lightDir.xyz);
     u_xlat12 = inversesqrt(u_xlat12);
-    u_xlat3.xyz = vec3(u_xlat12) * u_xlat2.xyz;
-    u_xlat12 = dot(abs(u_xlat2.xyz), vec3(1.0, 1.0, 1.0));
+    u_xlat3.xyz = vec3(u_xlat12) * lightDir.xyz;
+
+    u_xlat12 = dot(abs(lightDir.xyz), vec3(1.0, 1.0, 1.0));
     u_xlatb12 = u_xlat12>=0.00100000005;
     u_xlat0.x = dot(u_xlat3.xyz, u_xlat0.xyz);
-    u_xlat4.x = max(_DissolvePosMaskPos.w, 0.00999999978);
-    u_xlat0.x = u_xlat4.x + abs(u_xlat0.x);
-    u_xlat4.x = u_xlat4.x + u_xlat4.x;
-    u_xlat0.x = u_xlat0.x / u_xlat4.x;
-    u_xlat4.x = u_xlat0.x * -2.0 + 1.0;
-    u_xlat0.x = _DissolvePosMaskFilpOn * u_xlat4.x + u_xlat0.x;
-    u_xlat0.x = u_xlat0.x + (-_DissolvePosMaskOn);
+    positionWS.x = max(_DissolvePosMaskPos.w, 0.00999999978);
+    u_xlat0.x = positionWS.x + abs(u_xlat0.x);
+    positionWS.x = positionWS.x + positionWS.x;
+    u_xlat0.x = u_xlat0.x / positionWS.x;
+    positionWS.x = u_xlat0.x * -2.0 + 1.0;
+    u_xlat0.x = _DissolvePosMaskFilpOn * positionWS.x + u_xlat0.x;
+    u_xlat0.x = u_xlat0.x + -_DissolvePosMaskOn;
     u_xlat0.x = u_xlat0.x + 1.0;
     u_xlat0.x = clamp(u_xlat0.x, 0.0, 1.0);
-    u_xlat1.z = (u_xlatb12) ? u_xlat0.x : 1.0;
-    u_xlat1.w = 0.0;
-    vs_TEXCOORD5 = u_xlat1.xzww;
+    dissolveUV.z = (u_xlatb12) ? u_xlat0.x : 1.0;
+    dissolveUV.w = 0.0;
+    vs_TEXCOORD5 = dissolveUV.xzww;
     return;
 }
