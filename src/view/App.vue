@@ -1,5 +1,16 @@
 <template>
   <div class="flex items-center flex-col mx-auto box1">
+    <div class="textcontainer1">
+      <p class="fullwidth1 text1">Curr Var:&nbsp;&nbsp;{{ currVariable }}</p>
+    </div>
+    <button @click="onRefreshCurrentVariable">
+      Refresh variable
+    </button>
+  </div>
+
+  <hr class="splitter1">
+
+  <div class="flex items-center flex-col mx-auto box1">
     <button @click="onInlineVariable">
       Inline variable
     </button>
@@ -8,19 +19,11 @@
   <hr class="splitter1">
 
   <div class="flex items-center flex-col mx-auto box1">
-    <div class="textcontainer1">
-      <p class="fullwidth1 text1">Curr Var:&nbsp;&nbsp;{{ currVariable }}</p>
-    </div>
     <div class="textcontainer1 flex">
       <p class="text1">New Var:&nbsp;&nbsp;</p>
       <input v-model="newVariable" type="text">
     </div>
 
-    <button @click="onRefreshCurrentVariable">
-      Refresh variable
-    </button>
-    <div class="space_height1">
-    </div>
     <button @click="onRenameVariable">
       Rename variable
     </button>
@@ -31,6 +34,21 @@
   <div class="flex items-center flex-col mx-auto box1">
     <button @click="onRemoveRedundantOperatorSymbols">
       Remove redundant operator symbols
+    </button>
+    <div class="space_height1">
+    </div>
+    <button @click="onNormailzeNumber">
+      Normailze number
+    </button>
+    <div class="space_height1">
+    </div>
+    <button @click="onSimplifyOperations">
+      Simplify operations
+    </button>
+    <div class="space_height1">
+    </div>
+    <button @click="onFlipOperations">
+      Flip operations
     </button>
   </div>
 </template>
@@ -97,6 +115,24 @@ const onRenameVariable = () => {
 const onRemoveRedundantOperatorSymbols = () => {
   vscode.postMessage({
     command: 'onRemoveRedundantOperatorSymbols',
+  })
+}
+
+const onNormailzeNumber = () => {
+  vscode.postMessage({
+    command: 'onNormailzeNumber',
+  })
+}
+
+const onSimplifyOperations = () => {
+  vscode.postMessage({
+    command: 'onSimplifyOperations',
+  })
+}
+
+const onFlipOperations = () => {
+  vscode.postMessage({
+    command: 'onFlipOperations',
   })
 }
 

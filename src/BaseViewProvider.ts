@@ -5,10 +5,15 @@ export class BaseViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'base-view-sidebar'
 
 	private _view?: vscode.WebviewView
+	private static _siderbarview?: vscode.WebviewView
 
 	constructor(
 		private readonly _extensionUri: vscode.Uri,
 	) { }
+
+	public static postMessage(message: any) {
+		this._siderbarview?.webview.postMessage(message);
+	}
 
 	public resolveWebviewView(
 		webviewView: vscode.WebviewView,
@@ -16,6 +21,7 @@ export class BaseViewProvider implements vscode.WebviewViewProvider {
 		_token: vscode.CancellationToken,
 	) {
 		this._view = webviewView
+		BaseViewProvider._siderbarview = webviewView
 
 		webviewView.webview.options = {
 			// Allow scripts in the webview

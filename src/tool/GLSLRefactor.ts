@@ -2,6 +2,7 @@ import * as vscode from 'vscode'
 import { TokenReader } from './TokenReader';
 import { TextReader } from './TextReader'
 import { GLSLTokenizer, TokenType } from './Tokenizer';
+import { BaseViewProvider } from '../BaseViewProvider';
 
 export class GLSLRefactor {
     static GetTokenReader(): TokenReader | null {
@@ -51,10 +52,20 @@ export class GLSLRefactor {
         if (!editor) return;
         var tokenReader = this.GetTokenReader();
         const document = editor.document;
-        const offset = editor.selection.active.character;
-        const position = document.positionAt(offset);
-        var token = tokenReader?.GetTokenAtCharactorPosition(offset);
+
+        const position = editor.selection.active;
+        if (!position) return;
+        const index = editor.document.offsetAt(position);
+        console.log(index);
+        var token = tokenReader?.GetTokenAtCharactorPosition(index);
         if (!token) { return; }
         console.log(token.Value);
+
+        BaseViewProvider.postMessage({
+            command: 'setCurrentVariable',
+            text: token.Value
+        });
     }
+
+    // 0.00999999978转换为0.01，有没有什么算法
 }

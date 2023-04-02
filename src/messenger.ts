@@ -33,6 +33,15 @@ const receiveMessages = (webview: vscode.Webview) => {
 			case 'onRemoveRedundantOperatorSymbols': {
 				break
 			}
+			case 'onNormailzeNumber': {
+				break
+			}
+			case 'onSimplifyOperations': {
+				break
+			}
+			case 'onFlipOperations': {
+				break
+			}
 		}
 	})
 }
